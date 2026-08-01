@@ -27,6 +27,32 @@
     overflow:hidden;
     padding:36px 30px 30px;
     display:flex; flex-direction:column; align-items:center;
+    filter: blur(14px);
+    transition: filter 0.8s ease;
+  }
+  .card.revealed{ filter: blur(0); }
+
+  .reveal-overlay{
+    position:fixed; inset:0;
+    background:rgba(20,20,15,0.35);
+    display:flex; align-items:center; justify-content:center;
+    z-index:50;
+    cursor:pointer;
+    transition: opacity 0.6s ease;
+  }
+  .reveal-overlay.hidden{
+    opacity:0;
+    pointer-events:none;
+  }
+  .reveal-text{
+    background:rgba(255,255,255,0.9);
+    color:#2f6659;
+    font-family:'Cairo', sans-serif;
+    font-weight:700;
+    font-size:16px;
+    padding:14px 26px;
+    border-radius:30px;
+    box-shadow:0 4px 14px rgba(0,0,0,0.2);
   }
 
   /* confetti dot border pattern on the outer edge */
@@ -123,12 +149,13 @@
     cursor:pointer;
     display:flex; align-items:center; justify-content:center;
     box-shadow:0 2px 6px rgba(0,0,0,0.15);
+    z-index:5;
   }
 </style>
 </head>
 <body>
 
-  <div class="card">
+  <div class="card" id="card">
 
     <!-- Sun doodle -->
     <svg class="sun" viewBox="0 0 100 100">
@@ -194,21 +221,29 @@
 
   </div>
 
+  <div class="reveal-overlay" id="revealOverlay">
+    <div class="reveal-text">دوسي</div>
+  </div>
+
   <script>
     const audio = document.getElementById('bgSong');
     const btn = document.getElementById('soundBtn');
+    const card = document.getElementById('card');
+    const overlay = document.getElementById('revealOverlay');
 
     function setPlayingUI(isPlaying){
       btn.textContent = isPlaying ? '🔊' : '🔇';
     }
 
-    // Try to autoplay as soon as the page loads.
-    window.addEventListener('load', () => {
+    overlay.addEventListener('click', () => {
+      card.classList.add('revealed');
+      overlay.classList.add('hidden');
       audio.play().then(() => setPlayingUI(true)).catch(() => setPlayingUI(false));
     });
 
-    // Manual toggle in case the browser blocked autoplay.
-    btn.addEventListener('click', () => {
+    // Manual toggle in case the browser blocked audio.
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
       if(audio.paused){
         audio.play().then(() => setPlayingUI(true)).catch(() => {});
       } else {
