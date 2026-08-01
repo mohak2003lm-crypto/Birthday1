@@ -112,6 +112,18 @@
     width:110px; height:150px;
     opacity:.95;
   }
+
+  .sound-btn{
+    position:absolute; top:14px; left:14px;
+    width:36px; height:36px;
+    border-radius:50%;
+    border:none;
+    background:rgba(255,255,255,0.55);
+    font-size:16px;
+    cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 2px 6px rgba(0,0,0,0.15);
+  }
 </style>
 </head>
 <body>
@@ -177,7 +189,34 @@
             stroke="#a06fae" stroke-width="9" fill="none" stroke-linecap="round"/>
     </svg>
 
+    <button id="soundBtn" class="sound-btn" aria-label="تشغيل الموسيقى">🔇</button>
+    <audio id="bgSong" src="song.mp3" loop></audio>
+
   </div>
+
+  <script>
+    const audio = document.getElementById('bgSong');
+    const btn = document.getElementById('soundBtn');
+
+    function setPlayingUI(isPlaying){
+      btn.textContent = isPlaying ? '🔊' : '🔇';
+    }
+
+    // Try to autoplay as soon as the page loads.
+    window.addEventListener('load', () => {
+      audio.play().then(() => setPlayingUI(true)).catch(() => setPlayingUI(false));
+    });
+
+    // Manual toggle in case the browser blocked autoplay.
+    btn.addEventListener('click', () => {
+      if(audio.paused){
+        audio.play().then(() => setPlayingUI(true)).catch(() => {});
+      } else {
+        audio.pause();
+        setPlayingUI(false);
+      }
+    });
+  </script>
 
 </body>
 </html>
